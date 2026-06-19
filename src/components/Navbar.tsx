@@ -35,16 +35,16 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "py-3 px-4 md:px-8"
-            : "py-5 px-4 md:px-8"
+            ? "py-0 md:py-3 px-0 md:px-8"
+            : "py-0 md:py-5 px-0 md:px-8"
         }`}
       >
         <nav
-          className={`mx-auto max-w-7xl rounded-full transition-all duration-300 ${
+          className={`mx-auto flex items-center justify-between transition-all duration-300 w-full rounded-none px-6 py-4 backdrop-blur-md md:max-w-7xl md:rounded-full ${
             scrolled
-              ? "glass-panel bg-navy-800/80 shadow-lg px-6 py-3"
-              : "bg-transparent px-4 py-2 border-b border-transparent"
-          } flex items-center justify-between`}
+              ? "bg-navy-900/95 border-b border-slate-800/80 shadow-md md:glass-panel md:bg-navy-800/80 md:shadow-lg md:px-6 md:py-3 md:border-none"
+              : "bg-navy-900/90 border-b border-slate-800/40 md:bg-transparent md:px-4 md:py-2 md:border-none"
+          }`}
         >
           {/* Logo */}
           <a href="#home" className="flex items-center gap-2 group font-semibold text-xl tracking-tight text-white">
@@ -100,7 +100,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[72px] z-40 mx-4 p-6 rounded-2xl glass-panel bg-navy-800/95 shadow-xl md:hidden flex flex-col gap-4 border border-slate-700/50"
+            className="fixed inset-x-0 top-[68px] z-40 mx-4 p-6 rounded-2xl bg-navy-900/98 shadow-2xl md:hidden flex flex-col gap-4 border border-slate-800/80 backdrop-blur-xl"
           >
             {navItems.map((item, idx) => (
               <motion.a

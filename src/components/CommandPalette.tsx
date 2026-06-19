@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Hash, Download, Sparkles, Mail, FileText, ArrowRight, CornerDownLeft } from "lucide-react";
+import { Search, Hash, Sparkles, FileText, CornerDownLeft } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface CommandItem {
@@ -113,9 +113,11 @@ export default function CommandPalette() {
   // Focus input when menu opens
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 80);
-      setSearch("");
-      setSelectedIndex(0);
+      setTimeout(() => {
+        inputRef.current?.focus();
+        setSearch("");
+        setSelectedIndex(0);
+      }, 80);
     }
   }, [isOpen]);
 

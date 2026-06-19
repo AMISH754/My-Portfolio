@@ -73,9 +73,9 @@ export default function ContactSection() {
         spread: 80,
         origin: { y: 0.6 }
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus("error");
-      setErrorMsg(err.message || "Could not connect to the mail server. Please try again.");
+      setErrorMsg((err as Error).message || "Could not connect to the mail server. Please try again.");
     }
   };
 
@@ -110,7 +110,7 @@ export default function ContactSection() {
           >
             <div className="space-y-8">
               <h3 className="text-2xl font-bold text-white tracking-wide">
-                Let's discuss something <span className="text-secondary">great</span>.
+                Let&apos;s discuss something <span className="text-secondary">great</span>.
               </h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Whether you have an internship role, an open-source query, or just want to talk tech and competitive coding, my inbox is always open.

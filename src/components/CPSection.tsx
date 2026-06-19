@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Award, Flame, Code } from "lucide-react";
+import { ExternalLink, Code } from "lucide-react";
 import { CometCard } from "./ui/CometCard";
 
 
@@ -15,6 +15,7 @@ const Github = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function CPSection() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
 
@@ -59,7 +60,7 @@ export default function CPSection() {
         const cfStatusData = await cfStatusRes.json();
         if (cfStatusData.status === "OK" && Array.isArray(cfStatusData.result)) {
           const solvedProblems = new Set<string>();
-          cfStatusData.result.forEach((sub: any) => {
+          cfStatusData.result.forEach((sub: { verdict: string; problem?: { contestId: number; index: string } }) => {
             if (sub.verdict === "OK" && sub.problem) {
               const problemId = `${sub.problem.contestId}-${sub.problem.index}`;
               solvedProblems.add(problemId);
@@ -107,7 +108,7 @@ export default function CPSection() {
         const ghContribData = await ghContribRes.json();
         if (ghContribData && ghContribData.total) {
           let totalContributions = 0;
-          Object.values(ghContribData.total).forEach((val: any) => {
+          Object.values(ghContribData.total).forEach((val: unknown) => {
             totalContributions += Number(val || 0);
           });
 

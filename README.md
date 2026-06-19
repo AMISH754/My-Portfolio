@@ -1,5 +1,7 @@
 # Amish Kumar Dubey | Premium Engineering Portfolio
 
+Live Portfolio: [https://my-portfolio-97f92.web.app/](https://my-portfolio-97f92.web.app/)
+
 A high-performance, visually stunning developer portfolio and engineering playground built using **Next.js**, **React**, and **Tailwind CSS v4**. This portfolio integrates live API data and a custom canvas simulation module to highlight full-stack capabilities, competitive coding achievements, and an Electronics & Communication Engineering (ECE) background.
 
 ---

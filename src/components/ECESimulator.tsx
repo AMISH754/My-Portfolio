@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Sliders, Radio, HelpCircle, Eye } from "lucide-react";
+import { Activity, Sliders } from "lucide-react";
 
 type WaveType = "sine" | "square" | "triangle" | "sawtooth" | "superposition";
 

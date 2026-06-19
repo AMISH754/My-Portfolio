@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Code2, Globe, Database, Cpu } from "lucide-react";
+import { Code2 } from "lucide-react";
 
 // Inline SVG Icon components for each technology
 const CplusplusIcon = () => (

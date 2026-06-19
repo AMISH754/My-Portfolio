@@ -31,7 +31,7 @@ export default function AboutSection() {
         const cfStatusData = await cfStatusRes.json();
         if (cfStatusData.status === "OK" && Array.isArray(cfStatusData.result)) {
           const solved = new Set();
-          cfStatusData.result.forEach((sub: any) => {
+          cfStatusData.result.forEach((sub: { verdict: string; problem?: { contestId: number; index: string } }) => {
             if (sub.verdict === "OK" && sub.problem) {
               solved.add(`${sub.problem.contestId}-${sub.problem.index}`);
             }
@@ -40,7 +40,7 @@ export default function AboutSection() {
             cfSolved = solved.size;
           }
         }
-      } catch (e) { }
+      } catch { }
 
       try {
         const lcRes = await fetch("https://leetcode-api-faisal.vercel.app/AMISH_KUMAR_DUBEY");
@@ -54,7 +54,7 @@ export default function AboutSection() {
             lcSolved = altData.totalSolved;
           }
         }
-      } catch (e) { }
+      } catch { }
 
       let gfgSolved = 62;
       try {
@@ -130,7 +130,7 @@ export default function AboutSection() {
             <div className="mt-8 p-6 rounded-2xl bg-navy-800/50 border border-slate-800/80">
               <h3 className="text-sm uppercase tracking-wider font-semibold text-secondary mb-3">Core Philosophy</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                "Writing clean code isn't just about making machines do what we want; it's about explaining to other developers what we intend for the machine to do."
+                &ldquo;Writing clean code isn&apos;t just about making machines do what we want; it&apos;s about explaining to other developers what we intend for the machine to do.&rdquo;
               </p>
             </div>
           </motion.div>
@@ -143,7 +143,7 @@ export default function AboutSection() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-5 grid grid-cols-2 gap-4"
           >
-            {stats.map((stat, idx) => (
+            {stats.map((stat) => (
               <div
                 key={stat.label}
                 className="card bg-navy-800/80 border border-slate-800 hover:border-slate-700/80 transition-all p-6 flex flex-col justify-center items-center text-center rounded-2xl shadow-lg hover:shadow-xl hover:translate-y-[-2px] duration-300"

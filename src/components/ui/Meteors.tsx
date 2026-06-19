@@ -29,7 +29,10 @@ export const Meteors = ({
       animationDelay: `${(Math.random() * (maxDelay - minDelay) + minDelay).toFixed(2)}s`,
       animationDuration: `${Math.floor(Math.random() * (maxDuration - minDuration) + minDuration)}s`,
     }));
-    setMeteorStyles(styles);
+    const timer = setTimeout(() => {
+      setMeteorStyles(styles);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [number, minDelay, maxDelay, minDuration, maxDuration]);
 
   return (

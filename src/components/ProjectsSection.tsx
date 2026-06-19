@@ -31,12 +31,15 @@ export default function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [repos, setRepos] = useState<any[]>([]);
   const [reposLoading, setReposLoading] = useState(false);
 
   useEffect(() => {
     if (activeTab === "github" && repos.length === 0) {
-      setReposLoading(true);
+      setTimeout(() => {
+        setReposLoading(true);
+      }, 0);
       fetch("https://api.github.com/users/AMISH754/repos?sort=updated&per_page=6")
         .then((res) => res.json())
         .then((data) => {
@@ -190,10 +193,10 @@ export default function ProjectsSection() {
             {/* Filter Controls */}
             <div className="flex justify-center items-center gap-3 flex-wrap mb-12">
               <Filter className="h-4 w-4 text-slate-400" />
-              {["All", "Web Dev", "Applications"].map((filter) => (
+              {(["All", "Web Dev", "Applications"] as const).map((filter) => (
                 <button
                   key={filter}
-                  onClick={() => setActiveFilter(filter as any)}
+                  onClick={() => setActiveFilter(filter)}
                   className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 cursor-pointer ${
                     activeFilter === filter
                       ? "bg-primary text-white shadow-md shadow-primary/20"
