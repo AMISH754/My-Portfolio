@@ -50,8 +50,8 @@ export default function Footer() {
             <a
               key={social.name}
               href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={social.href.startsWith("mailto:") ? undefined : "_blank"}
+              rel={social.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
               className="p-3 rounded-full bg-slate-800/80 hover:bg-primary text-slate-300 hover:text-white hover:scale-110 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
               aria-label={social.name}
             >
