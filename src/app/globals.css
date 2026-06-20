@@ -142,12 +142,14 @@ body {
 .text-gradient-primary {
   background: linear-gradient(135deg, #216955 0%, #387766 50%, #b3e5d1 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-orange {
   background: linear-gradient(135deg, #387766 0%, #b3e5d1 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
