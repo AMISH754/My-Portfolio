@@ -97,7 +97,7 @@ export default function ProjectsSection() {
       description: "Developed a full-stack web application for book management and discovery, leveraging Node.js and Express.js for a scalable backend.",
       image: "/bookpulse.png",
       tech: ["Node.js", "Express.js", "PostgreSQL", "Bootstrap"],
-      liveLink: "https://bookpulse-demo.example.com",
+      liveLink: "https://book-pulse-project.onrender.com/",
       githubLink: "https://github.com/AMISH754/Book_pulse-project",
       features: [
         "Developed a full-stack web application for book management and discovery, leveraging Node.js and Express.js.",
@@ -146,7 +146,7 @@ export default function ProjectsSection() {
   return (
     <section id="projects" className="py-24 px-6 relative bg-transparent">
       <div className="max-w-6xl mx-auto">
-        
+
         {/* Section Heading */}
         <div className="text-center mb-16">
           <motion.h2
@@ -168,21 +168,19 @@ export default function ProjectsSection() {
         <div className="flex justify-center items-center gap-4 mb-10 select-none">
           <button
             onClick={() => setActiveTab("projects")}
-            className={`px-5 py-2 text-xs font-extrabold tracking-wider uppercase rounded-xl border transition-all cursor-pointer ${
-              activeTab === "projects"
-                ? "bg-primary border-primary text-white shadow-lg shadow-primary/25"
-                : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
-            }`}
+            className={`px-5 py-2 text-xs font-extrabold tracking-wider uppercase rounded-xl border transition-all cursor-pointer ${activeTab === "projects"
+              ? "bg-primary border-primary text-white shadow-lg shadow-primary/25"
+              : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
+              }`}
           >
             Featured Projects
           </button>
           <button
             onClick={() => setActiveTab("github")}
-            className={`px-5 py-2 text-xs font-extrabold tracking-wider uppercase rounded-xl border transition-all cursor-pointer ${
-              activeTab === "github"
-                ? "bg-primary border-primary text-white shadow-lg shadow-primary/25"
-                : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
-            }`}
+            className={`px-5 py-2 text-xs font-extrabold tracking-wider uppercase rounded-xl border transition-all cursor-pointer ${activeTab === "github"
+              ? "bg-primary border-primary text-white shadow-lg shadow-primary/25"
+              : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
+              }`}
           >
             GitHub Activity
           </button>
@@ -197,11 +195,10 @@ export default function ProjectsSection() {
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 cursor-pointer ${
-                    activeFilter === filter
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/40"
-                  }`}
+                  className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 cursor-pointer ${activeFilter === filter
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/40"
+                    }`}
                 >
                   {filter}
                 </button>
@@ -229,7 +226,7 @@ export default function ProjectsSection() {
                         sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 33vw"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-navy-900 to-transparent opacity-60" />
-                      
+
                       {/* Hover Actions Overlay */}
                       <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none group-hover:pointer-events-auto">
                         <a
