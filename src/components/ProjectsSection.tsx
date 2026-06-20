@@ -95,7 +95,7 @@ export default function ProjectsSection() {
       title: "BookPulse",
       category: "Web Dev",
       description: "Developed a full-stack web application for book management and discovery, leveraging Node.js and Express.js for a scalable backend.",
-      image: "/bookpulse.png",
+      image: "/bookpulse.png?v=2",
       tech: ["Node.js", "Express.js", "PostgreSQL", "Bootstrap"],
       liveLink: "https://book-pulse-project.onrender.com/",
       githubLink: "https://github.com/AMISH754/Book_pulse-project",
