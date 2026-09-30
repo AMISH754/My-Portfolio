@@ -1,146 +1,111 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Code2, Search } from "lucide-react";
+import React, { useState } from "react";
+import { Menu, X, Command } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "CP", href: "#cp" },
-    { name: "Projects", href: "#projects" },
-    { name: "Education", href: "#education" },
-    { name: "Contact", href: "#contact" },
+  const navLinks = [
+    { label: "Specimen", href: "#home", num: "00" },
+    { label: "About", href: "#about", num: "01" },
+    { label: "Technical Index", href: "#skills", num: "02" },
+    { label: "Benchmarks", href: "#cp", num: "03" },
+    { label: "Signal Lab", href: "#ece-lab", num: "04" },
+    { label: "Selected Works", href: "#projects", num: "05" },
+    { label: "Contact", href: "#contact", num: "06" },
   ];
 
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "py-0 md:py-3 px-0 md:px-8"
-            : "py-0 md:py-5 px-0 md:px-8"
-        }`}
-      >
-        <nav
-          className={`mx-auto flex items-center justify-between transition-all duration-300 w-full rounded-none px-6 py-4 backdrop-blur-md md:max-w-7xl md:rounded-full ${
-            scrolled
-              ? "bg-navy-900/95 border-b border-slate-800/80 shadow-md md:glass-panel md:bg-navy-800/80 md:shadow-lg md:px-6 md:py-3 md:border-none"
-              : "bg-navy-900/90 border-b border-slate-800/40 md:bg-transparent md:px-4 md:py-2 md:border-none"
-          }`}
-        >
-          {/* Logo */}
-          <a href="#home" className="flex items-center gap-2 group font-semibold text-xl tracking-tight text-white">
-            <Code2 className="h-6 w-6 text-primary group-hover:rotate-12 transition-transform duration-300" />
-            <span>
-              Amish<span className="text-secondary font-bold">.dev</span>
-            </span>
-          </a>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#FAFAF8]/95 backdrop-blur-sm hairline-b">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
+        {/* Brand identity */}
+        <a href="#home" className="flex items-center gap-3 group text-[#151514]">
+          <span className="font-sans font-medium text-base tracking-tight">
+            Amish Kumar Dubey
+          </span>
+          <span className="hidden sm:inline-block font-mono text-[11px] text-[#6B6A66] tracking-wider uppercase">
+            / ECE BIT Mesra
+          </span>
+        </a>
 
-          {/* Desktop Nav Items */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8 text-sm">
+          <div className="flex items-center gap-6">
+            {navLinks.slice(1, 6).map((item) => (
               <a
-                key={item.name}
+                key={item.label}
                 href={item.href}
-                className="px-4 py-2 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200"
+                className="text-[#6B6A66] hover:text-[#151514] transition-colors py-1 flex items-center gap-1.5 text-[13px]"
               >
-                {item.name}
+                <span className="font-mono text-[10px] text-[#A3A29D]">{item.num}</span>
+                <span>{item.label}</span>
               </a>
             ))}
-            <button
-              onClick={() => window.dispatchEvent(new Event("toggle-command-palette"))}
-              className="mr-2 px-3 py-1.5 rounded-full bg-slate-900/60 border border-slate-800 hover:border-primary/50 text-slate-400 hover:text-white transition-all flex items-center gap-2 cursor-pointer font-mono text-[10px] font-bold"
-              title="Open Command Search"
-            >
-              <Search className="h-3.5 w-3.5 text-primary animate-pulse" />
-              <span>⌘K</span>
-            </button>
-            <a
-              href="#contact"
-              className="ml-2 inline-flex items-center justify-center px-4 py-1.5 text-xs font-semibold rounded-full bg-primary hover:bg-primary/95 text-white shadow-md shadow-primary/20 hover:scale-[1.05] hover:shadow-primary/30 transition-all uppercase tracking-wider cursor-pointer"
-            >
-              Hire Me
-            </a>
           </div>
 
-          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-3 pl-4 hairline-l">
+            <button
+              onClick={() => window.dispatchEvent(new Event("toggle-command-palette"))}
+              className="inline-flex items-center gap-2 px-2.5 py-1 text-xs font-mono text-[#6B6A66] hover:text-[#151514] bg-[#F1F1EE] hover:bg-[#DAD9D4] border border-[#DAD9D4] rounded-[4px] transition-colors cursor-pointer"
+              title="Open Command Palette"
+            >
+              <Command className="w-3.5 h-3.5" />
+              <span>⌘K</span>
+            </button>
+
+            <a
+              href="#contact"
+              className="btn-primary py-2 px-3.5 text-xs"
+            >
+              <span>Transmit</span>
+              <span className="arrow-nudge">→</span>
+            </a>
+          </div>
+        </nav>
+
+        {/* Mobile menu button */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={() => window.dispatchEvent(new Event("toggle-command-palette"))}
+            className="p-2 text-xs font-mono text-[#6B6A66] bg-[#F1F1EE] border border-[#DAD9D4] rounded-[4px]"
+            title="Search"
+          >
+            <Command className="w-4 h-4" />
+          </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+            className="p-2 text-[#151514] hover:bg-[#F1F1EE] rounded-[4px] transition-colors cursor-pointer"
             aria-label="Toggle Menu"
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-        </nav>
-      </header>
+        </div>
+      </div>
 
-      {/* Mobile Drawer/Menu Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[68px] z-40 mx-4 p-6 rounded-2xl bg-navy-900/98 shadow-2xl md:hidden flex flex-col gap-4 border border-slate-800/80 backdrop-blur-xl"
-          >
-            {navItems.map((item, idx) => (
-              <motion.a
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                key={item.name}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="py-2 px-4 rounded-xl text-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors"
-              >
-                {item.name}
-              </motion.a>
-            ))}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: navItems.length * 0.05 }}
-              onClick={() => {
-                setIsOpen(false);
-                window.dispatchEvent(new Event("toggle-command-palette"));
-              }}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-semibold w-full text-center mt-2 transition-all cursor-pointer"
-            >
-              <Search className="h-4 w-4 text-primary" />
-              Search Commands (⌘K)
-            </motion.button>
-            <motion.a
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: (navItems.length + 1) * 0.05 }}
-              href="#contact"
+      {/* Mobile Drawer */}
+      {isOpen && (
+        <div className="md:hidden bg-[#FAFAF8] hairline-b px-6 py-6 flex flex-col gap-4">
+          {navLinks.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
               onClick={() => setIsOpen(false)}
-              className="inline-flex items-center justify-center px-4 py-3 rounded-xl bg-primary hover:bg-primary/95 text-white font-semibold w-full text-center mt-2 shadow-lg shadow-primary/20 transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+              className="flex items-center justify-between py-2 hairline-b text-[#151514] hover:text-[#6B6A66] transition-colors text-base"
             >
-              Hire Me
-            </motion.a>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+              <span>{item.label}</span>
+              <span className="font-mono text-xs text-[#A3A29D]">{item.num}</span>
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={() => setIsOpen(false)}
+            className="btn-primary w-full mt-2 py-3 text-center"
+          >
+            Transmit Message →
+          </a>
+        </div>
+      )}
+    </header>
   );
 }

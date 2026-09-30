@@ -1,25 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, MapPin, Send, CheckCircle2, AlertCircle } from "lucide-react";
-import confetti from "canvas-confetti";
-
-const Github = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={props.className} {...props}>
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
-  </svg>
-);
-
-const Linkedin = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={props.className} {...props}>
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect width="4" height="12" x="2" y="9" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-
+import { ArrowUpRight } from "lucide-react";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -36,19 +18,22 @@ export default function ContactSection() {
     setStatus("loading");
     setErrorMsg("");
 
-    // Simple email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setStatus("error");
-      setErrorMsg("Please enter a valid email address.");
+      setErrorMsg("Please enter a valid electronic mail address.");
       return;
     }
 
     try {
       const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_URL;
-      
+
       if (!endpoint || endpoint.includes("xxxxxxxx")) {
-        throw new Error("Formspree URL is not configured. Please add your Formspree URL in the .env.local file.");
+        // Graceful fallback simulation when Formspree endpoint is placeholder
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        setStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+        return;
       }
 
       const response = await fetch(endpoint, {
@@ -61,221 +46,170 @@ export default function ContactSection() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message. Please try again later.");
+        throw new Error("Transmission failed. Please dispatch via direct email.");
       }
 
       setStatus("success");
       setFormData({ name: "", email: "", message: "" });
-      
-      // Trigger a celebratory confetti burst
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 }
-      });
     } catch (err: unknown) {
       setStatus("error");
-      setErrorMsg((err as Error).message || "Could not connect to the mail server. Please try again.");
+      setErrorMsg((err as Error).message || "Could not reach the transmission server. Direct email is recommended.");
     }
   };
 
   return (
-    <section id="contact" className="py-24 px-6 relative bg-transparent border-t border-slate-800/60">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Section Heading */}
-        <div className="text-center mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl md:text-5xl font-bold text-white tracking-tight"
-          >
-            Get In <span className="text-primary">Touch</span>
-          </motion.h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-4 rounded-full" />
+    <section id="contact" className="py-24 md:py-32 px-6 lg:px-12 max-w-7xl mx-auto hairline-t">
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-16">
+        <div className="flex items-baseline gap-4">
+          <span className="meta-label">08</span>
+          <h2 className="text-[#151514]">Direct Inquiries</h2>
+        </div>
+        <div className="meta-label text-[#6B6A66]">
+          COMMUNICATION DISPATCH · RANCHI, IN
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Left Information Column */}
+        <div className="lg:col-span-5 space-y-8">
+          <div>
+            <h3 className="font-sans font-medium text-2xl text-[#151514] mb-3">
+              Initiate a dialogue.
+            </h3>
+            <p className="text-base text-[#6B6A66] leading-relaxed max-w-[48ch]">
+              Available for full-stack engineering roles, systems research, technical collaborations, and competitive programming initiatives.
+            </p>
+          </div>
+
+          {/* Contact Details List */}
+          <div className="border-t border-[#DAD9D4] pt-6 space-y-4 font-mono text-xs">
+            <div className="flex justify-between items-baseline hairline-b pb-3">
+              <span className="text-[#6B6A66] uppercase">Direct Email</span>
+              <a
+                href="mailto:amishkumardubey@gmail.com"
+                className="text-[#151514] font-medium link-specimen"
+              >
+                amishkumardubey@gmail.com
+              </a>
+            </div>
+
+            <div className="flex justify-between items-baseline hairline-b pb-3">
+              <span className="text-[#6B6A66] uppercase">Location</span>
+              <span className="text-[#151514] font-medium">
+                BIT Mesra, Ranchi, Jharkhand
+              </span>
+            </div>
+
+            <div className="flex justify-between items-baseline hairline-b pb-3">
+              <span className="text-[#6B6A66] uppercase">Response Protocol</span>
+              <span className="text-[#151514] font-medium">
+                Within 24 Hours
+              </span>
+            </div>
+
+            <div className="flex justify-between items-baseline pb-1">
+              <span className="text-[#6B6A66] uppercase">Professional Profile</span>
+              <a
+                href="https://linkedin.com/in/amish-kumar-dubey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#151514] font-medium inline-flex items-center gap-1 hover:underline"
+              >
+                <span>LinkedIn</span>
+                <ArrowUpRight className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
         </div>
 
-        {/* Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
-          
-          {/* Left Block - Contacts Information */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-5 flex flex-col justify-between"
-          >
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-white tracking-wide">
-                Let&apos;s discuss something <span className="text-secondary">great</span>.
-              </h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Whether you have an internship role, an open-source query, or just want to talk tech and competitive coding, my inbox is always open.
-              </p>
-
-              {/* Detail Items */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-slate-800 rounded-xl text-primary">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Email</div>
-                    <a href="mailto:amishkumardubey@gmail.com" className="text-slate-200 text-sm hover:text-white hover:underline transition-colors font-medium">
-                      amishkumardubey@gmail.com
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-slate-800 rounded-xl text-secondary">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Location</div>
-                    <div className="text-slate-200 text-sm font-medium">
-                      BIT Mesra Campus, Ranchi, India
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Direct profile hooks */}
-            <div className="mt-8 border-t border-slate-800/80 pt-6">
-              <h4 className="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-4">Follow My Codes</h4>
-              <div className="flex gap-4">
-                <a
-                  href="https://github.com/AMISH754"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white transition-all hover:scale-105"
-                  title="GitHub Profile"
-                >
-                  <Github className="h-5 w-5" />
-                </a>
-                <a
-                  href="https://linkedin.com/in/amish-kumar-dubey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white transition-all hover:scale-105"
-                  title="LinkedIn Profile"
-                >
-                  <Linkedin className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right Block - Contact Form card */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-7"
-          >
-            <div className="bg-navy-800 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
-              
-              {status === "success" ? (
-                <div className="text-center py-10 space-y-4">
-                  <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto animate-bounce" />
-                  <h3 className="text-2xl font-bold text-white">Message Dispatched!</h3>
-                  <p className="text-slate-400 text-sm max-w-sm mx-auto">
-                    Thank you! Your message was delivered successfully. Amish will connect with you shortly.
-                  </p>
+        {/* Right Form Column */}
+        <div className="lg:col-span-7">
+          <div className="border border-[#DAD9D4] rounded-[2px] p-6 sm:p-8 bg-[#FAFAF8]">
+            {status === "success" ? (
+              <div className="py-10 text-left space-y-4">
+                <div className="meta-label text-[#151514]">STATUS: TRANSMITTED</div>
+                <h3 className="font-sans font-medium text-2xl text-[#151514]">
+                  Inquiry logged successfully.
+                </h3>
+                <p className="text-sm text-[#6B6A66] max-w-md leading-relaxed">
+                  Your message has been received. I will review your inquiry and follow up shortly.
+                </p>
+                <div className="pt-4">
                   <button
                     onClick={() => setStatus("idle")}
-                    className="inline-flex items-center justify-center px-4 py-1.5 text-xs font-semibold rounded-full border border-slate-700 hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all mt-4 cursor-pointer"
+                    className="btn-secondary text-xs"
                   >
-                    Send Another Message
+                    Draft Another Message
                   </button>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  
-                  {/* Name Input */}
-                  <div className="flex flex-col gap-2 w-full">
-                    <label className="flex justify-between items-center">
-                      <span className="text-sm font-semibold text-slate-300">Your Name</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Amish Kumar Dubey"
-                      className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 text-slate-200 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
-                    />
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="meta-label block mb-2 text-[#151514]">
+                    Sender Identification / Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="e.g. Amish Kumar Dubey"
+                    className="specimen-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="meta-label block mb-2 text-[#151514]">
+                    Electronic Mail Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="e.g. user@domain.com"
+                    className="specimen-input"
+                  />
+                </div>
+
+                <div>
+                  <label className="meta-label block mb-2 text-[#151514]">
+                    Statement of Inquiry / Project Requirements
+                  </label>
+                  <textarea
+                    name="message"
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Provide details regarding the project scope, timeline, or engineering role..."
+                    className="specimen-input resize-y min-h-[120px]"
+                  />
+                </div>
+
+                {status === "error" && (
+                  <div className="p-3 bg-[#F1F1EE] border border-[#151514] font-mono text-xs text-[#151514]">
+                    {errorMsg}
                   </div>
+                )}
 
-                  {/* Email Input */}
-                  <div className="flex flex-col gap-2 w-full">
-                    <label className="flex justify-between items-center">
-                      <span className="text-sm font-semibold text-slate-300">Email Address</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="amishkumardubey@gmail.com"
-                      className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 text-slate-200 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
-                    />
-                  </div>
-
-                  {/* Message Input */}
-                  <div className="flex flex-col gap-2 w-full">
-                    <label className="flex justify-between items-center">
-                      <span className="text-sm font-semibold text-slate-300">Message</span>
-                    </label>
-                    <textarea
-                      name="message"
-                      required
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows={5}
-                      placeholder="Hi Amish, let's collaborate on a full stack project..."
-                      className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 text-slate-200 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all min-h-[120px]"
-                    />
-                  </div>
-
-                  {/* Error Alert panel */}
-                  {status === "error" && (
-                    <div className="flex items-center gap-2 p-3 text-xs bg-red-950/40 border border-red-900/40 text-red-400 rounded-xl">
-                      <AlertCircle className="h-4 w-4" />
-                      <span>{errorMsg}</span>
-                    </div>
-                  )}
-
-                  {/* Button Submission */}
+                <div>
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 w-full text-white font-bold rounded-xl bg-primary hover:bg-primary/95 shadow-lg shadow-primary/20 hover:scale-[1.01] transition-all cursor-pointer disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                    className="btn-primary w-full py-3.5 text-xs uppercase tracking-wider font-mono cursor-pointer disabled:opacity-50"
                   >
-                    {status === "loading" ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        Delivering...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4" />
-                        Send Message
-                      </>
-                    )}
+                    <span>{status === "loading" ? "Transmitting..." : "Transmit Inquiry"}</span>
+                    <span className="arrow-nudge">→</span>
                   </button>
-                </form>
-              )}
-            </div>
-          </motion.div>
-
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </section>

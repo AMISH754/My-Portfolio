@@ -1,44 +1,47 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Schibsted_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import CommandPalette from "@/components/CommandPalette";
 import Footer from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const schibstedSans = Schibsted_Grotesk({
+  variable: "--font-schibsted",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Amish Kumar Dubey | Portfolio - ECE BIT Mesra, Full Stack Developer & CP",
-  description: "Official portfolio of Amish Kumar Dubey, an Electronics and Communication Engineering student at BIT Mesra, B.Tech CGPA 8.61. Full Stack Developer and Competitive Programmer.",
-  keywords: "Amish Kumar Dubey, BIT Mesra, ECE, Full Stack Developer, Competitive Programmer, Codeforces, LeetCode, React, Next.js, Portfolio",
+  title: "Amish Kumar Dubey — Portfolio & Specimen",
+  description: "Electronics and Communication Engineering at BIT Mesra (CGPA 8.67, 750+ Problems Solved). Full-stack software engineering and competitive programming.",
+  keywords: "Amish Kumar Dubey, BIT Mesra, ECE, Full Stack Developer, Competitive Programming, Next.js, Type Specimen",
   authors: [{ name: "Amish Kumar Dubey" }],
   openGraph: {
-    title: "Amish Kumar Dubey | Portfolio",
-    description: "ECE student at BIT Mesra, Full Stack Developer & Competitive Programmer.",
+    title: "Amish Kumar Dubey — Portfolio & Specimen",
+    description: "Electronics & Communication Engineering at BIT Mesra (CGPA 8.67). Full-Stack Developer & Competitive Programmer.",
     type: "website",
   },
 };
 
 export default function RootLayout({
   children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} scroll-smooth dark`}
-      data-theme="dark"
+      className={`${schibstedSans.variable} ${plexMono.variable} scroll-smooth`}
     >
-      <body className="min-h-screen flex flex-col bg-navy-900 text-slate-100 antialiased overflow-x-hidden">
+      <body className="min-h-screen flex flex-col bg-[#FAFAF8] text-[#151514] font-sans antialiased selection:bg-[#151514] selection:text-[#FAFAF8]">
         <Navbar />
         <CommandPalette />
         <main className="flex-grow">

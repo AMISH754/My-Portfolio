@@ -1,14 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Hash, Sparkles, FileText, CornerDownLeft } from "lucide-react";
-import confetti from "canvas-confetti";
+import { Search, CornerDownLeft, X } from "lucide-react";
 
 interface CommandItem {
   title: string;
   category: string;
-  icon: React.ReactNode;
   action: () => void;
   shortcut?: string;
 }
@@ -20,75 +17,72 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  // Define available actions
   const commands: CommandItem[] = [
-    // Navigation
     {
-      title: "Scroll to Home",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Home Specimen",
+      category: "Section 00",
       action: () => scrollToSection("#home"),
     },
     {
-      title: "Scroll to About",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Biography & Specifications",
+      category: "Section 01",
       action: () => scrollToSection("#about"),
     },
     {
-      title: "Scroll to Skills & Tech",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Technical Index",
+      category: "Section 02",
       action: () => scrollToSection("#skills"),
     },
     {
-      title: "Scroll to CP Profiles",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Algorithmic Benchmarks",
+      category: "Section 03",
       action: () => scrollToSection("#cp"),
     },
     {
-      title: "Scroll to ECE Diagnostic Lab",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Signal Processing Lab",
+      category: "Section 04",
       action: () => scrollToSection("#ece-lab"),
     },
     {
-      title: "Scroll to Featured Projects",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Selected Works",
+      category: "Section 05",
       action: () => scrollToSection("#projects"),
     },
     {
-      title: "Scroll to Education Timeline",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Recognitions & Leadership",
+      category: "Section 06",
+      action: () => scrollToSection("#achievements"),
+    },
+    {
+      title: "Navigate: Academic Record",
+      category: "Section 07",
       action: () => scrollToSection("#education"),
     },
     {
-      title: "Scroll to Get In Touch",
-      category: "Navigation",
-      icon: <Hash className="h-4 w-4" />,
+      title: "Navigate: Direct Inquiries",
+      category: "Section 08",
       action: () => scrollToSection("#contact"),
     },
-    // Interactive actions
     {
-      title: "Trigger Confetti Celebration",
-      category: "Actions",
-      icon: <Sparkles className="h-4 w-4 text-amber-400" />,
-      action: () => triggerCelebration(),
-      shortcut: "C",
+      title: "Document: Download Curriculum Vitae (PDF)",
+      category: "External File",
+      action: () => window.open("/resume.pdf", "_blank"),
+      shortcut: "CV",
     },
     {
-      title: "View Resume PDF",
-      category: "Downloads",
-      icon: <FileText className="h-4 w-4 text-cyan-400" />,
-      action: () => window.open("/resume.pdf", "_blank"),
-      shortcut: "R",
+      title: "External: Codeforces Profile (@amish_kr_dubey)",
+      category: "Profile",
+      action: () => window.open("https://codeforces.com/profile/amish_kr_dubey", "_blank"),
+      shortcut: "CF",
+    },
+    {
+      title: "External: GitHub Profile (@AMISH754)",
+      category: "Profile",
+      action: () => window.open("https://github.com/AMISH754", "_blank"),
+      shortcut: "GH",
     },
   ];
 
-  // Open/close listeners
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -103,50 +97,27 @@ export default function CommandPalette() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Listen for custom trigger events (for clicking the search badge in Navbar)
   useEffect(() => {
     const handleToggle = () => setIsOpen((prev) => !prev);
     window.addEventListener("toggle-command-palette", handleToggle);
     return () => window.removeEventListener("toggle-command-palette", handleToggle);
   }, []);
 
-  // Focus input when menu opens
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputRef.current?.focus();
         setSearch("");
         setSelectedIndex(0);
-      }, 80);
+      }, 50);
     }
   }, [isOpen]);
 
-  // Filter commands by search term
   const filteredCommands = commands.filter((cmd) =>
     cmd.title.toLowerCase().includes(search.toLowerCase()) ||
     cmd.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Scroll active item into view
-  useEffect(() => {
-    if (scrollRef.current) {
-      const activeEl = scrollRef.current.children[selectedIndex] as HTMLElement;
-      if (activeEl) {
-        const parent = scrollRef.current;
-        const activeTop = activeEl.offsetTop;
-        const activeHeight = activeEl.offsetHeight;
-        const parentHeight = parent.offsetHeight;
-
-        if (activeTop < parent.scrollTop) {
-          parent.scrollTop = activeTop;
-        } else if (activeTop + activeHeight > parent.scrollTop + parentHeight) {
-          parent.scrollTop = activeTop + activeHeight - parentHeight;
-        }
-      }
-    }
-  }, [selectedIndex]);
-
-  // Handle keyboard interaction inside list
   const handleListKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -170,145 +141,100 @@ export default function CommandPalette() {
     }
   };
 
-  const triggerCelebration = () => {
-    setIsOpen(false);
-    confetti({
-      particleCount: 120,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ["#216955", "#387766", "#b3e5d1", "#ffffff"],
-    });
-  };
+  if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4">
-          
-          {/* Backdrop blur overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-slate-950/70 backdrop-blur-md"
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4 bg-[#151514]/60">
+      <div className="w-full max-w-lg bg-[#FAFAF8] border border-[#151514] rounded-[2px] shadow-none flex flex-col max-h-[460px] overflow-hidden">
+        {/* Search Bar */}
+        <div className="flex items-center gap-3 px-4 py-3.5 hairline-b bg-[#F1F1EE]">
+          <Search className="w-4 h-4 text-[#6B6A66] shrink-0" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setSelectedIndex(0);
+            }}
+            onKeyDown={handleListKeyDown}
+            placeholder="Search index commands, sections, files..."
+            className="w-full bg-transparent text-[#151514] placeholder-[#A3A29D] font-sans text-sm focus:outline-none border-none p-0"
           />
-
-          {/* Modal Command Frame */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: -10 }}
-            transition={{ duration: 0.15 }}
-            className="w-full max-w-lg bg-navy-800/90 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden z-10 glass-panel flex flex-col max-h-[450px]"
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-[#6B6A66] hover:text-[#151514] p-1"
           >
-            {/* Search Input bar */}
-            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-700/50">
-              <Search className="h-4.5 w-4.5 text-slate-400 shrink-0" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setSelectedIndex(0);
-                }}
-                onKeyDown={handleListKeyDown}
-                placeholder="Search commands, navigate sections..."
-                className="w-full bg-transparent text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-0 focus:border-none border-none p-0"
-              />
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-400 font-bold tracking-widest shrink-0">
-                ESC
-              </span>
-            </div>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
-            {/* List entries */}
-            <div
-              ref={scrollRef}
-              className="flex-grow overflow-y-auto py-2 divide-y divide-transparent px-2"
-            >
-              {filteredCommands.length > 0 ? (
-                filteredCommands.map((cmd, idx) => {
-                  const isSelected = idx === selectedIndex;
-                  return (
-                    <div
-                      key={cmd.title}
-                      onClick={() => cmd.action()}
-                      onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
-                        isSelected
-                          ? "bg-primary text-white"
-                          : "text-slate-300 hover:text-white"
+        {/* Command entries */}
+        <div
+          ref={scrollRef}
+          className="flex-grow overflow-y-auto divide-y divide-[#DAD9D4]"
+        >
+          {filteredCommands.length > 0 ? (
+            filteredCommands.map((cmd, idx) => {
+              const isSelected = idx === selectedIndex;
+              return (
+                <div
+                  key={cmd.title}
+                  onClick={() => cmd.action()}
+                  onMouseEnter={() => setSelectedIndex(idx)}
+                  className={`flex items-center justify-between px-4 py-3 cursor-pointer transition-colors ${
+                    isSelected ? "bg-[#151514] text-[#FAFAF8]" : "text-[#151514] hover:bg-[#F1F1EE]"
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-sans text-xs font-medium">
+                      {cmd.title}
+                    </span>
+                    <span
+                      className={`font-mono text-[10px] uppercase tracking-wider ${
+                        isSelected ? "text-[#A3A29D]" : "text-[#6B6A66]"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`p-1.5 rounded-lg shrink-0 ${
-                            isSelected
-                              ? "bg-white/20 text-white"
-                              : "bg-slate-950 border border-slate-800 text-slate-400"
-                          }`}
-                        >
-                          {cmd.icon}
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold font-mono tracking-wide">
-                            {cmd.title}
-                          </div>
-                          <div
-                            className={`text-[9px] uppercase tracking-wider mt-0.5 font-bold ${
-                              isSelected ? "text-slate-200" : "text-slate-500"
-                            }`}
-                          >
-                            {cmd.category}
-                          </div>
-                        </div>
-                      </div>
+                      {cmd.category}
+                    </span>
+                  </div>
 
-                      <div className="flex items-center gap-2">
-                        {cmd.shortcut && (
-                          <span
-                            className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase shrink-0 ${
-                              isSelected
-                                ? "bg-white/20 border-white/20 text-white"
-                                : "bg-slate-900 border-slate-800 text-slate-500"
-                            }`}
-                          >
-                            {cmd.shortcut}
-                          </span>
-                        )}
-                        {isSelected && (
-                          <CornerDownLeft className="h-3 w-3 text-white opacity-70 shrink-0" />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-8 text-xs font-mono text-slate-500">
-                  No matching commands found.
+                  <div className="flex items-center gap-2">
+                    {cmd.shortcut && (
+                      <span
+                        className={`font-mono text-[10px] px-1.5 py-0.5 border rounded-[2px] ${
+                          isSelected
+                            ? "border-[#6B6A66] text-[#FAFAF8]"
+                            : "border-[#DAD9D4] text-[#6B6A66] bg-[#F1F1EE]"
+                        }`}
+                      >
+                        {cmd.shortcut}
+                      </span>
+                    )}
+                    {isSelected && (
+                      <CornerDownLeft className="w-3.5 h-3.5 text-[#FAFAF8] opacity-80" />
+                    )}
+                  </div>
                 </div>
-              )}
+              );
+            })
+          ) : (
+            <div className="p-8 text-center font-mono text-xs text-[#6B6A66]">
+              No index entries found.
             </div>
-
-            {/* Helper footer */}
-            <div className="border-t border-slate-700/50 bg-slate-950/40 px-4 py-2.5 flex items-center justify-between text-[9px] text-slate-500 font-mono select-none">
-              <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1">
-                  <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 rounded">↑↓</span> Move
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="px-1.5 py-0.5 bg-slate-900 border border-slate-800 rounded">Enter</span> Select
-                </span>
-              </div>
-              <div>
-                <span>Press <span className="font-bold">⌘K</span> or <span className="font-bold">Ctrl+K</span> to toggle</span>
-              </div>
-            </div>
-
-          </motion.div>
+          )}
         </div>
-      )}
-    </AnimatePresence>
+
+        {/* Footer info bar */}
+        <div className="hairline-t bg-[#F1F1EE] px-4 py-2 flex items-center justify-between font-mono text-[10px] text-[#6B6A66]">
+          <div className="flex items-center gap-2">
+            <span>[↑↓] SELECT</span>
+            <span>·</span>
+            <span>[ENTER] EXECUTE</span>
+          </div>
+          <span>[ESC] CLOSE</span>
+        </div>
+      </div>
+    </div>
   );
 }
