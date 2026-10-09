@@ -1,83 +1,124 @@
-# Amish Kumar Dubey | Premium Engineering Portfolio
+# Amish Kumar Dubey · Engineering Portfolio
 
-Live Portfolio: [https://my-portfolio-97f92.web.app/](https://my-portfolio-97f92.web.app/)
+[![Live Site](https://img.shields.io/badge/Live_Portfolio-Firebase_Hosting-E0115F?style=for-the-badge&logo=firebase&logoColor=white)](https://my-portfolio-97f92.web.app/)
+[![Next.js](https://img.shields.io/badge/Next.js_15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-A high-performance, visually stunning developer portfolio and engineering playground built using **Next.js**, **React**, and **Tailwind CSS v4**. This portfolio integrates live API data and a custom canvas simulation module to highlight full-stack capabilities, competitive coding achievements, and an Electronics & Communication Engineering (ECE) background.
+A high-performance, dark-mode developer portfolio and competitive programming dashboard built for **Amish Kumar Dubey** — Full-stack developer and competitive programmer at **BIT Mesra** (B.Tech ECE, 2024–2028).
 
 ---
 
-## 🚀 Key Features
+## 🌟 Key Highlights
 
-### 1. ECE Diagnostic Lab Sandbox
-* An interactive HTML5 Canvas-based oscilloscope simulating electrical waveform behaviors.
-* Controls to tweak **Frequency**, **Amplitude**, **Phase Shift**, and **Thermal Channel Noise**.
-* Renders **Sine**, **Square**, **Triangle**, and **Sawtooth** signals, alongside **Signal Superposition** (wave interference).
-* Live mathematical calculations for peak-to-peak voltage ($V_{pp}$), RMS voltage ($V_{rms}$), signal period ($T$), and frequency ($f$), alongside a dynamically rendered mathematical wave formula.
+### 1. ⚡ Live Competitive Programming & GitHub Telemetry
+Real-time stats dynamically fetched on the client side with graceful fallback handling:
+- **Codeforces:** Current rating, max peak rating, rank title, and unique solved count via official Codeforces API.
+- **LeetCode:** Live problem-solving counts (Total, Easy, Medium, Hard) hydrated from `alfa-leetcode-api`.
+- **GeeksforGeeks:** Aggregate verified solved problem metrics.
+- **GitHub Profile:** Live public repository count and open-source contribution calendar metrics.
 
-### 2. Cmd+K Spotlight Command Palette
-* A keyboard-accessible glassmorphic dialog overlay triggered by `Cmd + K` or `Ctrl + K`.
-* Features list filtering and arrow key keyboard navigation to:
-  * Scroll cleanly to page sections (Home, About, Skills, CP, ECE Lab, Projects, Education, Contact).
-  * Launch a canvas-confetti celebration.
-  * Open/Download your resume PDF.
+### 2. 🛡️ Multi-Layer Protected Contact Terminal
+Enterprise-grade defense mechanisms against spam bots and malicious flooding:
+- **Invisible Honeypot Trap (`_gotcha`):** Catches automated bots that auto-fill hidden input fields and silently deflects them.
+- **Velocity Check:** Flags and rejects rapid submissions completed in under 2 seconds.
+- **Session Rate Limiter:** Enforces a maximum of 3 submissions per 10-minute sliding window via `sessionStorage`.
+- **Input Sanitization:** Strips HTML/script tags and enforces strict character limits.
+- **Interactive Copy:** One-click email copy button with instant visual feedback.
 
-### 3. Dynamic Competitive Coding & Open Source Stats
-* Performs browser client-side fetches to hydrate metrics dynamically (loading skeleton loaders are integrated during hydration):
-  * **Codeforces:** Queries user info and status submissions to calculate live ratings, maximum ratings, current rank, and exact count of unique solved problems.
-  * **LeetCode:** Fetches solved counts and easy/medium/hard breakdown statistics.
-  * **GeeksforGeeks:** Fetches total solved count using the GFG stats card JSON mirror.
-  * **GitHub Profile:** Pulls total public repositories count and sums up contributions across all years from the contributions proxy calendar.
-* *Includes try-catch wrappers to gracefully fall back to accurate offline counts if API endpoints time out or hit rate limits.*
+### 3. 🎯 Command Palette (`⌘K` / `Ctrl+K`)
+Keyboard-driven modal navigation featuring:
+- Instant section jumping (About, Stack, Projects, Contests, Journey, Contact).
+- One-click resume viewing & download.
+- Interactive canvas-confetti celebration.
+- Keyboard navigation with arrow keys and `Enter`.
 
-### 4. Interactive Projects Activity Grid
-* Toggles between **"Featured Projects"** (curated stacks with slide-in detail modals) and **"GitHub Activity"** (direct repo cards fetched live from your GitHub profile displaying stars ⭐, forks 🍴, and languages).
+### 4. 🛠️ Branded Tech Stack Showcase
+25+ technologies categorized into Languages, Frontend, Backend & Databases, and Tools & Platforms, featuring crisp, color-accurate inline SVG branded vector icons.
+
+### 5. 🚀 High-Performance Static HTML Export
+Configured with `output: "export"` in `next.config.ts`, generating blazing-fast, serverless-ready static assets compatible with Firebase Hosting, GitHub Pages, Vercel, and Cloudflare Pages.
+
+---
+
+## 🏗️ Project Architecture
+
+```
+my/
+├── public/                 # Static assets, icons, resume PDF
+├── src/
+│   ├── app/
+│   │   ├── globals.css     # Design tokens, keyframe animations, typography
+│   │   ├── layout.tsx      # Root layout, Space Grotesk & JetBrains Mono fonts
+│   │   └── page.tsx        # Single-page application orchestrator
+│   ├── components/
+│   │   ├── Navbar.tsx            # Sticky frosted header with scroll-progress & mobile drawer
+│   │   ├── HeroSection.tsx       # Hero showcase with CTA and quick stats
+│   │   ├── AboutSection.tsx      # Personal background and engineering focus
+│   │   ├── SkillsSection.tsx     # 25+ Tech skills with branded SVG icons
+│   │   ├── ProjectsSection.tsx   # Curated showcase cards & live GitHub repos
+│   │   ├── CPSection.tsx         # Live Codeforces, LeetCode, GFG & GitHub telemetry
+│   │   ├── JourneySection.tsx    # Chronological academic & leadership timeline
+│   │   ├── ContactSection.tsx    # Spam-protected contact form with Formspree
+│   │   ├── CommandPalette.tsx    # ⌘K Spotlight command modal
+│   │   └── Footer.tsx            # Minimalist footer
+│   └── lib/
+│       └── utils.ts              # Core utilities (cn helper)
+├── design.md               # Design system & technical specification
+├── next.config.ts          # Next.js static export configuration
+└── package.json            # Project dependencies and build scripts
+```
 
 ---
 
 ## 🛠️ Technology Stack
 
-* **Framework:** Next.js (App Router, Static HTML Export Mode)
-* **Styling:** Tailwind CSS v4, Vanilla CSS variable custom overrides
-* **Animation:** Framer Motion (page transitions, hover scaling, overlays)
-* **Icons:** Lucide React
-* **Effects:** Canvas Confetti
+| Category | Technology |
+|---|---|
+| **Framework** | Next.js (App Router, Static Export) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS v4 + Custom Vanilla CSS Variables |
+| **Typography** | Space Grotesk & JetBrains Mono via `next/font/google` |
+| **Icons** | Lucide React + Custom Inline SVGs |
+| **Micro-Interactions** | Canvas Confetti, CSS Keyframe Animations |
+| **Form Service** | Formspree |
+| **Deployment** | Firebase Hosting |
 
 ---
 
-## 💻 Getting Started
+## 💻 Getting Started Locally
 
-### 1. Installation
+### Prerequisites
+- Node.js 18.x or later
+- npm or yarn
 
-Clone the repository and install dependencies:
+### 1. Clone & Install
 ```bash
 git clone https://github.com/AMISH754/My-Portfolio.git
 cd My-Portfolio
 npm install
 ```
 
-### 2. Run Locally (Development Server)
+### 2. Configure Environment Variables
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_FORMSPREE_URL=https://formspree.io/f/xzdqnbel
+```
 
-Start the local server with hot reloading:
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the site.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 3. Production Build & Export
-
-Because the site uses `output: "export"` in [next.config.ts](file:///c:/Users/hp/Desktop/my/next.config.ts), compiling generates fully static HTML, CSS, and JS assets in the `out/` folder, ready for deployment to any static host (like Firebase Hosting, GitHub Pages, or Vercel):
+### 4. Build for Production
 ```bash
 npm run build
 ```
+This generates the optimized static bundle in the `out/` directory, ready to deploy.
 
 ---
 
-## 📁 File Structure Highlights
+## 📄 License & Attribution
 
-* [page.tsx](file:///c:/Users/hp/Desktop/my/src/app/page.tsx) - Main page layout.
-* [ECESimulator.tsx](file:///c:/Users/hp/Desktop/my/src/components/ECESimulator.tsx) - ECE Oscilloscope canvas sandbox component.
-* [CommandPalette.tsx](file:///c:/Users/hp/Desktop/my/src/components/CommandPalette.tsx) - Spotlight command dialog overlay.
-* [CPSection.tsx](file:///c:/Users/hp/Desktop/my/src/components/CPSection.tsx) - Dynamic stats cards query (Codeforces, LeetCode, GFG, GitHub).
-* [ProjectsSection.tsx](file:///c:/Users/hp/Desktop/my/src/components/ProjectsSection.tsx) - Curated showcase cards and dynamic GitHub repo fetches.
-* [Navbar.tsx](file:///c:/Users/hp/Desktop/my/src/components/Navbar.tsx) - Header navigation containing the command search trigger.
-* [globals.css](file:///c:/Users/hp/Desktop/my/src/app/globals.css) - Styling variables, mask definitions, and scrollbars.
+Designed and engineered with care by **Amish Kumar Dubey**. Open-sourced under the [MIT License](LICENSE).

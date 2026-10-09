@@ -1,32 +1,32 @@
 import type { Metadata } from "next";
-import { Schibsted_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import CommandPalette from "@/components/CommandPalette";
 import Footer from "@/components/Footer";
 
-const schibstedSans = Schibsted_Grotesk({
-  variable: "--font-schibsted",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Amish Kumar Dubey — Portfolio & Specimen",
-  description: "Electronics and Communication Engineering at BIT Mesra (CGPA 8.67, 750+ Problems Solved). Full-stack software engineering and competitive programming.",
-  keywords: "Amish Kumar Dubey, BIT Mesra, ECE, Full Stack Developer, Competitive Programming, Next.js, Type Specimen",
+  title: "Amish Kumar Dubey · Full-stack developer & competitive programmer",
+  description: "Portfolio of Amish Kumar Dubey, a full-stack developer and competitive programmer at BIT Mesra.",
+  keywords: "Amish Kumar Dubey, Full Stack Developer, Competitive Programmer, BIT Mesra, React, Next.js, C++, Codeforces, LeetCode",
   authors: [{ name: "Amish Kumar Dubey" }],
   openGraph: {
-    title: "Amish Kumar Dubey — Portfolio & Specimen",
-    description: "Electronics & Communication Engineering at BIT Mesra (CGPA 8.67). Full-Stack Developer & Competitive Programmer.",
+    title: "Amish Kumar Dubey · Full-stack developer & competitive programmer",
+    description: "Portfolio of Amish Kumar Dubey, full-stack software developer and competitive programmer.",
     type: "website",
   },
 };
@@ -39,9 +39,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${schibstedSans.variable} ${plexMono.variable} scroll-smooth`}
+      suppressHydrationWarning
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} scroll-smooth js`}
     >
-      <body className="min-h-screen flex flex-col bg-[#FAFAF8] text-[#151514] font-sans antialiased selection:bg-[#151514] selection:text-[#FAFAF8]">
+      <body
+        suppressHydrationWarning
+        className="min-h-screen flex flex-col bg-black text-[#f3f3f6] font-sans antialiased selection:bg-[#e0115f] selection:text-white"
+      >
         <Navbar />
         <CommandPalette />
         <main className="flex-grow">
@@ -52,3 +56,4 @@ export default function RootLayout({
     </html>
   );
 }
+

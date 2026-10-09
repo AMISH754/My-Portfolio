@@ -1,111 +1,102 @@
 "use client";
 
-import React, { useState } from "react";
-import { Menu, X, Command } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Command, Menu, X } from "lucide-react";
 
 export default function Navbar() {
+  const [isSolid, setIsSolid] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const st = window.pageYOffset || document.documentElement.scrollTop;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? st / max : 0;
+      setScrollProgress(progress);
+      setIsSolid(st > 40);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navLinks = [
-    { label: "Specimen", href: "#home", num: "00" },
-    { label: "About", href: "#about", num: "01" },
-    { label: "Technical Index", href: "#skills", num: "02" },
-    { label: "Benchmarks", href: "#cp", num: "03" },
-    { label: "Signal Lab", href: "#ece-lab", num: "04" },
-    { label: "Selected Works", href: "#projects", num: "05" },
-    { label: "Contact", href: "#contact", num: "06" },
+    { label: "About", href: "#about" },
+    { label: "Stack", href: "#stack" },
+    { label: "Projects", href: "#projects" },
+    { label: "Contests", href: "#contests" },
+    { label: "Journey", href: "#journey" },
+    { label: "Contact", href: "#contact" },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#FAFAF8]/95 backdrop-blur-sm hairline-b">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
-        {/* Brand identity */}
-        <a href="#home" className="flex items-center gap-3 group text-[#151514]">
-          <span className="font-sans font-medium text-base tracking-tight">
-            Amish Kumar Dubey
-          </span>
-          <span className="hidden sm:inline-block font-mono text-[11px] text-[#6B6A66] tracking-wider uppercase">
-            / ECE BIT Mesra
-          </span>
-        </a>
+    <>
+      {/* Scroll progress bar */}
+      <div
+        className="progress"
+        aria-hidden="true"
+        style={{ transform: `scaleX(${scrollProgress})` }}
+      />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 text-sm">
-          <div className="flex items-center gap-6">
-            {navLinks.slice(1, 6).map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-[#6B6A66] hover:text-[#151514] transition-colors py-1 flex items-center gap-1.5 text-[13px]"
-              >
-                <span className="font-mono text-[10px] text-[#A3A29D]">{item.num}</span>
-                <span>{item.label}</span>
+      <header className={`nav ${isSolid ? "solid" : ""}`} id="nav">
+        <div className="nav-in">
+          <a className="logo" href="#top">
+            Amish Kumar Dubey
+          </a>
+
+          <nav aria-label="Main">
+            {navLinks.map((link) => (
+              <a key={link.label} className="nav-link" href={link.href}>
+                {link.label}
               </a>
             ))}
-          </div>
 
-          <div className="flex items-center gap-3 pl-4 hairline-l">
             <button
               onClick={() => window.dispatchEvent(new Event("toggle-command-palette"))}
-              className="inline-flex items-center gap-2 px-2.5 py-1 text-xs font-mono text-[#6B6A66] hover:text-[#151514] bg-[#F1F1EE] hover:bg-[#DAD9D4] border border-[#DAD9D4] rounded-[4px] transition-colors cursor-pointer"
-              title="Open Command Palette"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-[#c9c9d1] hover:text-[#f2477f] hover:border-[#e0115f]/50 transition-colors cursor-pointer"
+              title="Open Command Palette (⌘K)"
             >
               <Command className="w-3.5 h-3.5" />
               <span>⌘K</span>
             </button>
+          </nav>
 
-            <a
-              href="#contact"
-              className="btn-primary py-2 px-3.5 text-xs"
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center gap-3">
+            <button
+              onClick={() => window.dispatchEvent(new Event("toggle-command-palette"))}
+              className="p-2 rounded-lg bg-white/5 border border-white/10 text-white"
             >
-              <span>Transmit</span>
-              <span className="arrow-nudge">→</span>
-            </a>
+              <Command className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 text-white hover:text-[#f2477f]"
+              aria-label="Toggle Navigation"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
-        </nav>
-
-        {/* Mobile menu button */}
-        <div className="flex items-center gap-2 md:hidden">
-          <button
-            onClick={() => window.dispatchEvent(new Event("toggle-command-palette"))}
-            className="p-2 text-xs font-mono text-[#6B6A66] bg-[#F1F1EE] border border-[#DAD9D4] rounded-[4px]"
-            title="Search"
-          >
-            <Command className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2 text-[#151514] hover:bg-[#F1F1EE] rounded-[4px] transition-colors cursor-pointer"
-            aria-label="Toggle Menu"
-          >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile Drawer */}
-      {isOpen && (
-        <div className="md:hidden bg-[#FAFAF8] hairline-b px-6 py-6 flex flex-col gap-4">
-          {navLinks.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between py-2 hairline-b text-[#151514] hover:text-[#6B6A66] transition-colors text-base"
-            >
-              <span>{item.label}</span>
-              <span className="font-mono text-xs text-[#A3A29D]">{item.num}</span>
-            </a>
-          ))}
-          <a
-            href="#contact"
-            onClick={() => setIsOpen(false)}
-            className="btn-primary w-full mt-2 py-3 text-center"
-          >
-            Transmit Message →
-          </a>
-        </div>
-      )}
-    </header>
+        {/* Mobile Navigation Drawer */}
+        {isOpen && (
+          <div className="md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10 px-6 py-6 flex flex-col gap-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="font-mono text-lg text-[#c9c9d1] hover:text-[#f2477f] py-2 border-b border-white/5"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
+      </header>
+    </>
   );
 }

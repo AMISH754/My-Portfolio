@@ -1,26 +1,48 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import SkillsSection from "@/components/SkillsSection";
-import CPSection from "@/components/CPSection";
-import ECESimulator from "@/components/ECESimulator";
 import ProjectsSection from "@/components/ProjectsSection";
-import AchievementsSection from "@/components/AchievementsSection";
-import EducationSection from "@/components/EducationSection";
+import CPSection from "@/components/CPSection";
+import JourneySection from "@/components/JourneySection";
 import ContactSection from "@/components/ContactSection";
 
 export default function Home() {
+  useEffect(() => {
+    // Scroll reveal observer
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.getAttribute("data-d");
+            if (delay) {
+              (entry.target as HTMLElement).style.transitionDelay = `${delay}ms`;
+            }
+            entry.target.classList.add("in");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    const elements = document.querySelectorAll(".rv, .rv-l, .rv-r, .rv-s");
+    elements.forEach((el) => io.observe(el));
+
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="relative min-h-screen w-full bg-[#FAFAF8] text-[#151514]">
-      {/* Specimen Sections Flow */}
+    <div className="relative min-h-screen w-full bg-black text-[#f3f3f6]">
+      {/* Dark Crimson Portfolio Flow */}
       <HeroSection />
       <AboutSection />
       <SkillsSection />
-      <CPSection />
-      <ECESimulator />
       <ProjectsSection />
-      <AchievementsSection />
-      <EducationSection />
+      <CPSection />
+      <JourneySection />
       <ContactSection />
     </div>
   );

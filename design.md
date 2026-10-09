@@ -1,121 +1,108 @@
-# Mono — Quiet & Precise
+# Design System & Technical Architecture · Amish Kumar Dubey Portfolio
 
-## North Star: "Printed Specimen"
-Sleek, calm and exact, like a well-made type specimen or an architecture studio's portfolio. Black, white, and grays only. Character comes from typography, spacing, thin rules, and confident layout, not from decorative effects. Every element appears placed by hand with architectural precision.
+## 1. Aesthetic Vision: "Dark Crimson & Technical Precision"
+
+The portfolio embodies a **high-performance, cyber-minimalist dark aesthetic** inspired by modern developer terminals, competitive programming dashboards, and premium developer tools. It balances technical rigor with vibrant Ruby/Crimson accents and micro-animations.
 
 ---
 
-## 1. Color Palette & Tokens
+## 2. Color Palette & Design Tokens
 
-Neutrals only, slightly warm so the page avoids sterile coldness.
+A curated dark palette optimized for contrast, readability, and visual impact:
 
-| Token | Hex | Usage |
+| Token | Value | Role & Usage |
 |---|---|---|
-| `white` | `#FAFAF8` | Page background. Warm off-white. Never pure `#FFFFFF`. |
-| `surface` | `#F1F1EE` | Alternate section fills, hover states, input backgrounds. |
-| `line` | `#DAD9D4` | Hairline borders, table dividers, and section separators. |
-| `gray-400` | `#A3A29D` | Disabled text, subtle labels, placeholder values. |
-| `gray-600` | `#6B6A66` | Secondary body copy, captions, meta tags, and subtitles. |
-| `ink` | `#151514` | Primary text, display headings, solid buttons. Never pure `#000000`. |
-| `ink-deep` | `#0C0C0B` | Full-bleed dark sections (`03 // Benchmarks`, `Footer`). |
-
-### Rules:
-- The interface is predominantly `white` (`#FAFAF8`) and `ink` (`#151514`). Grays provide support without dominating.
-- Uses rhythmic full-bleed `ink-deep` (`#0C0C0B`) dark sections for contrast, paired with crisp `white` text.
-- No gradients, no glowing borders, no glassmorphism blur tricks, and no saturated color accents.
+| `--bg-base` | `#000000` | Pure deep black background for infinite depth |
+| `--bg-surface` | `rgba(255, 255, 255, 0.03)` | Subtle card fills and container surfaces |
+| `--bg-frosted` | `rgba(5, 5, 8, 0.92)` | Sticky navbar and modal backdrop with `backdrop-filter: blur(16px)` |
+| `--ruby` | `#e0115f` | Primary brand accent — active states, primary CTA buttons, highlight badges |
+| `--ruby-l` | `#f2477f` | Hover glow, gradients, secondary highlights, active indicator dots |
+| `--ink` | `#f3f3f6` | Primary high-contrast text |
+| `--mute` | `#8f8f9c` | Secondary descriptions, captions, timestamps |
+| `--border-subtle` | `rgba(255, 255, 255, 0.08)` | Hairline dividers, card outlines, subtle grid rules |
+| `--border-accent` | `rgba(224, 17, 95, 0.35)` | Interactive focus states and hover borders |
 
 ---
 
-## 2. Typography System
+## 3. Typography System
 
-- **Display & Body Typeface:** `Schibsted Grotesk` (Fallback: `Hanken Grotesk`, `system-ui`, `sans-serif`)
-  - Narrow, sharp, and confident.
-  - Headings are set to medium weight (`500`), avoiding heavy bold weights.
-  - Tight tracking: `-0.03em` on `h1`, `-0.02em` on `h2`, line-height `1.05–1.1`.
-- **Meta / Index Typeface:** `IBM Plex Mono` (12px, uppercase, letter-spacing `0.08em`, `gray-600`)
-  - Used for document stamps, section indexes (`00` to `08`), technical data tags, and parameters.
-- **Scale Contrast:**
-  - `h1`: `clamp(48px, 6.5vw, 104px)`
-  - `h2`: `clamp(32px, 4vw, 44px)`
-  - `h3`: `20px` (line-height `1.25`)
-  - Body: `16px` (line-height `1.6`, max reading width `~64ch`)
+Typography pairs modern geometric display font with an engineered monospace typeface via Google Fonts (`next/font/google`):
+
+- **Display & Body Font:** `Space Grotesk` (`--font-space`, subsets: `latin`)
+  - Confident, clean, geometric letterforms.
+  - Headings: `font-bold` to `font-medium`, tight tracking (`-0.02em` to `-0.03em`).
+  - Fluid typography scaling via CSS `clamp()` for cross-device fluidity.
+- **Monospace Font:** `JetBrains Mono` (`--font-jetbrains`, subsets: `latin`)
+  - Used for numbers, code tags, section labels (`01 / about`, `06 / contact`), telemetry stats, and badges.
+  - Crisp ligatures and technical aesthetic.
 
 ---
 
-## 3. Lines, Shapes & Elevation
+## 4. UI Components & Layout Hierarchy
 
-- **Borders:**
-  - `1px solid var(--line)` (`#DAD9D4`) for cards, section rules, and specimen table cells.
-  - `1px solid var(--ink)` (`#151514`) for active buttons, outlines, and focus rings.
-- **Corner Radii:**
-  - `4px` (`var(--radius)`) for interactive buttons, inputs, and command dialogs.
-  - `0–2px` (`var(--radius-sm)`) for specimen cards, tables, and images.
-  - No rounded pills or large circular geometries.
-- **Shadows:**
-  - `box-shadow: none;` across all components. Visual depth is established through hairline borders, surface tone changes, and generous whitespace.
-- **Section Dividers:**
-  - Full-width hairline rules (`1px solid var(--line)`) cleanly separate sections like a printed monograph.
-
----
-
-## 4. Motion & Micro-Interactions
-
-Precise, subtle, and snappy:
-- **Buttons:** Fill swaps from `ink` (`#151514`) to `#2A2A28` in `150ms`. No scaling or lifting.
-- **Links:** Underline transitions smoothly on hover via text-decoration-color (`200ms`).
-- **Cards:** Hover transitions border from `line` (`#DAD9D4`) to `ink` (`#151514`) with zero translation or scale.
-- **Arrow Glyphs (`→`):** Nudge `translateX(3px)` on hover of their parent link or button.
-- **Timing Function:** `cubic-bezier(0.25, 0.1, 0.25, 1)` with `120–200ms` duration.
-- **Accessibility:** Fully supports `prefers-reduced-motion: reduce`.
-
----
-
-## 5. Component Specifications
-
-- **Primary Button (`.btn-primary`):**
-  - Fill: `var(--ink)`, Text: `var(--white)`, Radius: `4px`, Padding: `12px 20px`, Weight: `500`. Label format: action verb + `→`.
-- **Secondary Button (`.btn-secondary`):**
-  - Transparent fill, `1px solid var(--ink)` border, `var(--ink)` text, `4px` radius. Hover fill: `var(--surface)`.
-- **Specimen Cards (`.specimen-card`):**
-  - `1px solid var(--line)` border, `0–2px` radius, `24–32px` padding. Features a mono index header (`CASE 01 · 2026`).
-- **Form Inputs (`.specimen-input`):**
-  - `var(--surface)` background, `1px solid var(--line)` border, `4px` radius. Focus: `outline: 2px solid var(--ink); outline-offset: 2px;`.
-- **Tags (`.specimen-tag`):**
-  - Monospace uppercase text, `1px solid var(--line)` border, `2px` radius.
-
----
-
-## 6. Page Cadence & Section Architecture
-
-1. **`00 // Hero Specimen`:** Asymmetrical 12-column grid. Left 8 columns with large heading + direct CTAs; right 4 columns with live data telemetry index.
-2. **`01 // Biography & Specifications`:** 2-column split with academic background and verified metrics ledger.
-3. **`02 // Technical Index`:** 4-category taxonomy table (Languages, Frontend, Backend, Toolchain).
-4. **`03 // Algorithmic Benchmarks`:** Full-bleed `#0C0C0B` dark section with live API telemetry (Codeforces, LeetCode, GitHub).
-5. **`04 // Signal Processing Lab`:** Architectural CRT oscilloscope simulation with harmonic superposition, noise parameter sliders, and wave equations.
-6. **`05 // Selected Works`:** Case study grid (`CASE 01` through `CASE 04`) with naturally toned image previews, mono meta headers, and technical feature breakdowns.
-7. **`06 // Recognitions & Leadership`:** Chronological ledger table for IETE Joint Secretary and institutional initiatives.
-8. **`07 // Academic Record`:** Chronological academic ledger (BIT Mesra, St. Xavier's, Bishop Hartmann Academy).
-9. **`08 // Direct Inquiries`:** Clean communication portal with focus-outlined inputs and transmission status.
-10. **`Colophon / Footer`:** Full-bleed `#0C0C0B` closing statement and typography index.
-11. **`Command Palette`:** `[ ⌘K ]` modal search frame with keyboard navigation.
+### Layout Cadence
+1. **`Navbar` (Sticky / Frosted):**
+   - Live scroll-progress bar (`scaleX(scrollProgress)`).
+   - Brand title `Amish Kumar Dubey` (clean, unadorned).
+   - Navigation links with hover underlines.
+   - Keyboard shortcut trigger `⌘K` for Spotlight Command Palette.
+   - Responsive mobile drawer with backdrop blur.
+2. **`HeroSection`:**
+   - Impactful title, live availability status beacon, quick bio.
+   - Direct CTA buttons: *Explore Projects*, *Get in Touch*, and resume links.
+3. **`AboutSection`:**
+   - Personal introduction, BIT Mesra background, engineering philosophy.
+4. **`SkillsSection`:**
+   - 25+ technology stack items organized into categorized domains:
+     - Languages (C++, C, Python, JavaScript, TypeScript, SQL)
+     - Frontend (React, Next.js, Tailwind CSS, HTML5, CSS3, Redux)
+     - Backend & Databases (Node.js, Express, MongoDB, PostgreSQL, REST APIs)
+     - Tools & Platforms (Git, GitHub, Docker, Postman, Linux, Vercel, Firebase)
+   - Every skill features an authentic, branded inline SVG vector icon.
+5. **`ProjectsSection`:**
+   - Curated showcase cards with tech stack tags, live demo links, and GitHub links.
+   - Tab switch to explore live repositories directly from GitHub.
+6. **`CPSection` (Competitive Programming Telemetry):**
+   - Real-time client-side stats fetched via live public APIs:
+     - **Codeforces:** Current rating, peak rating, rank title, solved problem tally.
+     - **LeetCode:** Solved count breakdown (Total, Easy, Medium, Hard) via `alfa-leetcode-api`.
+     - **GeeksforGeeks & GitHub:** Global metrics, repository counts, contribution tally.
+   - Fallback offline data ensures 100% uptime even if third-party endpoints rate-limit.
+7. **`JourneySection`:**
+   - Chronological engineering milestone ledger detailing academic milestones (BIT Mesra), leadership (Joint Secretary @ IETE Student Forum), and technical development.
+8. **`ContactSection`:**
+   - Direct outreach portal with interactive copy-to-clipboard email card.
+   - Multi-layer bot defense and Formspree integration.
+9. **`CommandPalette` (`⌘K` Spotlight):**
+   - Keyboard-driven modal search with instant section jumps, social links, resume download, and confetti celebration triggers.
+10. **`Footer`:**
+    - Minimalist closing signature, copyright, and navigation links.
 
 ---
 
-## 7. Verified Metrics & Data Integrity
+## 5. Security & Defensive Architecture (Contact Form)
 
-- **Cumulative GPA:** `8.67 / 10.0 (till 4th Sem)`
-- **Algorithmic Solutions:** `750+ Problems`
-- **Institution:** Birla Institute of Technology, Mesra (B.Tech in ECE, 2024–2028)
-- **Leadership Office:** Joint Secretary, IETE Student Forum (2026–2027 tenure)
+The contact transmission channel employs a 5-tier defensive pipeline:
+
+1. **Invisible Honeypot Trap (`_gotcha`):**
+   - Offscreen input hidden with `left: -9999px` and `aria-hidden="true"`.
+   - Automated spam bots auto-fill all visible inputs; if detected, the submission is silently intercepted with a faux success response.
+2. **Velocity & Timing Check:**
+   - Computes elapsed time from component mount (`Date.now() - formLoadTime`).
+   - Submissions submitted in `< 2000ms` (automated bot scripts) are flagged and rejected.
+3. **Session Sliding Rate Limiter:**
+   - Restricts users to maximum **3 submissions per 10-minute window** in `sessionStorage` to prevent DoS flooding and protect Formspree quotas.
+4. **Input Sanitization & Boundary Validation:**
+   - Strips malicious HTML tags and script characters (`<`, `>`, quotes).
+   - Strict input length caps: Name (100 chars), Email (254 chars), Message (2000 chars).
+   - Strict RFC email regex validation.
+5. **Formspree Integration:**
+   - Reliable serverless dispatch to `formspree.io` with clean error handling and user feedback.
 
 ---
 
-## 8. Anti-Patterns Explicitly Avoided
+## 6. Performance & Build Architecture
 
-- ❌ Inter, Geist, Poppins, DM Sans, Plus Jakarta Sans
-- ❌ Pure `#000000` on pure `#FFFFFF`
-- ❌ Gradient text, glowing borders, glassmorphism, blurred background blobs
-- ❌ Dark mode with dot matrix patterns or radial spotlights
-- ❌ Centered heroes with pill badges
-- ❌ Floating/lifting cards with drop shadows on hover (`scale()`)
-- ❌ Sparkle icons, emoji bullets, or buzzword copy
+- **Static Export Mode:** Configured with `output: "export"` in `next.config.ts`, generating zero-server dependency static HTML/CSS/JS deployable on Firebase Hosting, Vercel, or GitHub Pages.
+- **Zero Hydration Mismatch:** Clean SSR/client lifecycle synchronization with `suppressHydrationWarning` on root document tags.
+- **Zero Dead Code:** Pure, tree-shaken dependency bundle with all unused components removed.

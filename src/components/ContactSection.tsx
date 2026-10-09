@@ -1,216 +1,395 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Send,
+  CheckCircle2,
+  Globe,
+  Terminal,
+  Mail,
+  Code2,
+  Trophy,
+  ShieldCheck,
+  Copy,
+  Check,
+} from "lucide-react";
+import confetti from "canvas-confetti";
+
+// ── Input sanitizer: strips HTML tags and trims whitespace ──────────────────
+const sanitize = (str: string) =>
+  str.replace(/<[^>]*>/g, "").replace(/[<>'"]/g, "").trim().slice(0, 2000);
+
+// ── Rate limiter: max 3 submissions per 10 minutes (stored in sessionStorage) ─
+const RATE_LIMIT = 3;
+const RATE_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+
+function checkRateLimit(): { allowed: boolean; remaining: number } {
+  try {
+    const raw = sessionStorage.getItem("cf_rl");
+    const data: number[] = raw ? JSON.parse(raw) : [];
+    const now = Date.now();
+    const recent = data.filter((t) => now - t < RATE_WINDOW_MS);
+    if (recent.length >= RATE_LIMIT) {
+      return { allowed: false, remaining: 0 };
+    }
+    recent.push(now);
+    sessionStorage.setItem("cf_rl", JSON.stringify(recent));
+    return { allowed: true, remaining: RATE_LIMIT - recent.length };
+  } catch {
+    return { allowed: true, remaining: RATE_LIMIT };
+  }
+}
 
 export default function ContactSection() {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [formState, setFormState] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // ── Honeypot: bots fill this hidden field, humans don't ──────────────────
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
+  // ── Time-based check: bots submit in <2s, humans take longer ─────────────
+  const formLoadTime = useRef<number>(Date.now());
+
+  useEffect(() => {
+    formLoadTime.current = Date.now();
+  }, []);
+
+  const handleCopyEmail = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigator.clipboard.writeText("amishkumardubey@gmail.com");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2200);
   };
+
+  const formspreeUrl =
+    process.env.NEXT_PUBLIC_FORMSPREE_URL || "https://formspree.io/f/xzdqnbel";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
-    setErrorMsg("");
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setStatus("error");
-      setErrorMsg("Please enter a valid electronic mail address.");
+    // 1. Honeypot check — if filled, silently reject (bot detected)
+    if (honeypotRef.current?.value) {
+      setStatus("success"); // fake success so bots don't retry
       return;
     }
 
+    // 2. Time check — reject if submitted in under 2 seconds
+    const elapsed = Date.now() - formLoadTime.current;
+    if (elapsed < 2000) {
+      setErrorMessage("Submission too fast. Please try again.");
+      setStatus("error");
+      return;
+    }
+
+    // 3. Basic validation
+    if (!formState.name || !formState.email || !formState.message) return;
+
+    // 4. Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formState.email)) {
+      setErrorMessage("Please enter a valid email address.");
+      setStatus("error");
+      return;
+    }
+
+    // 5. Rate limit check
+    const { allowed } = checkRateLimit();
+    if (!allowed) {
+      setErrorMessage(
+        "Too many messages sent. Please wait 10 minutes before trying again."
+      );
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    setErrorMessage("");
+
+    // 6. Sanitize inputs before sending
+    const cleanName = sanitize(formState.name);
+    const cleanEmail = sanitize(formState.email);
+    const cleanMessage = sanitize(formState.message);
+
     try {
-      const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_URL;
-
-      if (!endpoint || endpoint.includes("xxxxxxxx")) {
-        // Graceful fallback simulation when Formspree endpoint is placeholder
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        setStatus("success");
-        setFormData({ name: "", email: "", message: "" });
-        return;
-      }
-
-      const response = await fetch(endpoint, {
+      const response = await fetch(formspreeUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json"
+          Accept: "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          name: cleanName,
+          email: cleanEmail,
+          message: cleanMessage,
+          _subject: `New Portfolio Inquiry from ${cleanName}`,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Transmission failed. Please dispatch via direct email.");
+      if (response.ok) {
+        setStatus("success");
+        confetti({
+          particleCount: 90,
+          spread: 80,
+          origin: { y: 0.7 },
+          colors: ["#e0115f", "#f2477f", "#ffffff"],
+        });
+        setFormState({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 6000);
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error || "Failed to transmit message. Please try again.");
+        setStatus("error");
       }
-
-      setStatus("success");
-      setFormData({ name: "", email: "", message: "" });
-    } catch (err: unknown) {
+    } catch {
+      setErrorMessage("Network error. Please check your connection and retry.");
       setStatus("error");
-      setErrorMsg((err as Error).message || "Could not reach the transmission server. Direct email is recommended.");
     }
   };
 
+  // Generate animated dot background (7 rows, 64 columns)
+  const waveRows = 7;
+  const waveCols = 64;
+  const amp = ["wS", "wM", "wL", "wL", "wL", "wM", "wS"];
+
+  const dots = [];
+  for (let r = 0; r < waveRows; r++) {
+    for (let c = 0; c < waveCols; c++) {
+      const isHot = r >= 2 && r <= 4;
+      const size = isHot ? 5 : 4;
+      const left = ((c / (waveCols - 1)) * 98 + 1).toFixed(2);
+      const top = 8 + r * 30;
+      const delay = -(c * 0.085 + r * 0.14).toFixed(2);
+
+      dots.push(
+        <i
+          key={`dot-${r}-${c}`}
+          className={`wd ${amp[r]}`}
+          style={{
+            left: `${left}%`,
+            top: `${top}px`,
+            width: `${size}px`,
+            height: `${size}px`,
+            background: isHot ? "#e0115f" : "rgba(255,255,255,.85)",
+            animationDelay: `${delay}s`,
+          }}
+        />
+      );
+    }
+  }
+
   return (
-    <section id="contact" className="py-24 md:py-32 px-6 lg:px-12 max-w-7xl mx-auto hairline-t">
-      {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-16">
-        <div className="flex items-baseline gap-4">
-          <span className="meta-label">08</span>
-          <h2 className="text-[#151514]">Direct Inquiries</h2>
-        </div>
-        <div className="meta-label text-[#6B6A66]">
-          COMMUNICATION DISPATCH · RANCHI, IN
-        </div>
+    <section id="contact" className="relative">
+      {/* Animated Dot Waves Background (Subtle background layer) */}
+      <div className="waves" id="waves" aria-hidden="true">
+        {dots}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-        {/* Left Information Column */}
-        <div className="lg:col-span-5 space-y-8">
-          <div>
-            <h3 className="font-sans font-medium text-2xl text-[#151514] mb-3">
-              Initiate a dialogue.
-            </h3>
-            <p className="text-base text-[#6B6A66] leading-relaxed max-w-[48ch]">
-              Available for full-stack engineering roles, systems research, technical collaborations, and competitive programming initiatives.
-            </p>
+      <div className="contact-grid">
+        {/* Left Column: Heading, Info, Email & Socials */}
+        <div className="c-left rv-l">
+          <div className="label">06 / contact</div>
+          <h2 className="h2">Let&apos;s connect</h2>
+          <p>
+            Open for software engineering roles, full-stack development, and
+            open-source collaboration. Feel free to reach out directly via email
+            or connect on social platforms.
+          </p>
+
+          {/* Interactive Email Bar with Click-to-Copy */}
+          <div className="flex items-center gap-2 p-3 my-1 rounded-xl bg-white/[0.03] border border-white/10 hover:border-[#e0115f]/40 transition-colors max-w-[420px]">
+            <a
+              href="mailto:amishkumardubey@gmail.com"
+              className="flex items-center gap-2.5 font-mono text-sm text-[#e6e6ea] hover:text-[#f2477f] transition-colors flex-1 truncate"
+            >
+              <Mail className="w-4 h-4 text-[#e0115f] flex-shrink-0" />
+              <span className="truncate">amishkumardubey@gmail.com</span>
+            </a>
+            <button
+              onClick={handleCopyEmail}
+              type="button"
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[#c9c9d1] hover:text-white transition-colors"
+              title="Copy email to clipboard"
+            >
+              {copiedEmail ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-emerald-400">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
           </div>
 
-          {/* Contact Details List */}
-          <div className="border-t border-[#DAD9D4] pt-6 space-y-4 font-mono text-xs">
-            <div className="flex justify-between items-baseline hairline-b pb-3">
-              <span className="text-[#6B6A66] uppercase">Direct Email</span>
-              <a
-                href="mailto:amishkumardubey@gmail.com"
-                className="text-[#151514] font-medium link-specimen"
-              >
-                amishkumardubey@gmail.com
-              </a>
-            </div>
-
-            <div className="flex justify-between items-baseline hairline-b pb-3">
-              <span className="text-[#6B6A66] uppercase">Location</span>
-              <span className="text-[#151514] font-medium">
-                BIT Mesra, Ranchi, Jharkhand
-              </span>
-            </div>
-
-            <div className="flex justify-between items-baseline hairline-b pb-3">
-              <span className="text-[#6B6A66] uppercase">Response Protocol</span>
-              <span className="text-[#151514] font-medium">
-                Within 24 Hours
-              </span>
-            </div>
-
-            <div className="flex justify-between items-baseline pb-1">
-              <span className="text-[#6B6A66] uppercase">Professional Profile</span>
-              <a
-                href="https://linkedin.com/in/amish-kumar-dubey"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#151514] font-medium inline-flex items-center gap-1 hover:underline"
-              >
-                <span>LinkedIn</span>
-                <ArrowUpRight className="w-3 h-3" />
-              </a>
-            </div>
+          {/* Social Links */}
+          <div className="socials mt-2">
+            <a
+              className="social"
+              href="https://github.com/AMISH754"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Terminal className="w-4 h-4 mr-2 inline-block" />
+              GitHub
+            </a>
+            <a
+              className="social"
+              href="https://www.linkedin.com/in/amish-kumar-dubey/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Globe className="w-4 h-4 mr-2 inline-block" />
+              LinkedIn
+            </a>
+            <a
+              className="social"
+              href="https://codeforces.com/profile/amish_kr_dubey"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Code2 className="w-4 h-4 mr-2 inline-block" />
+              Codeforces
+            </a>
+            <a
+              className="social"
+              href="https://leetcode.com/u/AMISH_KUMAR_DUBEY/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Trophy className="w-4 h-4 mr-2 inline-block" />
+              LeetCode
+            </a>
           </div>
         </div>
 
-        {/* Right Form Column */}
-        <div className="lg:col-span-7">
-          <div className="border border-[#DAD9D4] rounded-[2px] p-6 sm:p-8 bg-[#FAFAF8]">
-            {status === "success" ? (
-              <div className="py-10 text-left space-y-4">
-                <div className="meta-label text-[#151514]">STATUS: TRANSMITTED</div>
-                <h3 className="font-sans font-medium text-2xl text-[#151514]">
-                  Inquiry logged successfully.
-                </h3>
-                <p className="text-sm text-[#6B6A66] max-w-md leading-relaxed">
-                  Your message has been received. I will review your inquiry and follow up shortly.
-                </p>
-                <div className="pt-4">
-                  <button
-                    onClick={() => setStatus("idle")}
-                    className="btn-secondary text-xs"
-                  >
-                    Draft Another Message
-                  </button>
-                </div>
-              </div>
+        {/* Right Column: Protected Contact Form */}
+        <form className="contact-form rv-r" onSubmit={handleSubmit} noValidate>
+          {/* Header indicator */}
+          <div className="flex items-center justify-between pb-2 border-b border-white/5">
+            <span className="text-sm font-semibold tracking-wide text-white">
+              Send a Message
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Open to opportunities
+            </span>
+          </div>
+
+          {/* ── Honeypot: invisible trap for automated spam bots ── */}
+          <input
+            ref={honeypotRef}
+            type="text"
+            name="_gotcha"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: "-9999px",
+              width: "1px",
+              height: "1px",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
+          />
+
+          <label>
+            Name
+            <input
+              className="field"
+              type="text"
+              name="name"
+              id="contact-name"
+              placeholder="Your name"
+              required
+              maxLength={100}
+              autoComplete="name"
+              value={formState.name}
+              onChange={(e) =>
+                setFormState({ ...formState, name: e.target.value })
+              }
+            />
+          </label>
+
+          <label>
+            Email
+            <input
+              className="field"
+              type="email"
+              name="email"
+              id="contact-email"
+              placeholder="you@example.com"
+              required
+              maxLength={254}
+              autoComplete="email"
+              value={formState.email}
+              onChange={(e) =>
+                setFormState({ ...formState, email: e.target.value })
+              }
+            />
+          </label>
+
+          <label>
+            Message
+            <textarea
+              className="field"
+              name="message"
+              id="contact-message"
+              rows={4}
+              placeholder="Tell me about your project, idea, or role..."
+              required
+              maxLength={2000}
+              value={formState.message}
+              onChange={(e) =>
+                setFormState({ ...formState, message: e.target.value })
+              }
+            />
+            <span className="text-[10px] font-mono text-[#8f8f9c] mt-0.5 block text-right">
+              {formState.message.length}/2000
+            </span>
+          </label>
+
+          {status === "error" && (
+            <div className="text-xs font-mono text-red-400 bg-red-950/40 p-3 rounded-lg border border-red-500/30">
+              {errorMessage}
+            </div>
+          )}
+
+          <button
+            className="btn btn-primary"
+            type="submit"
+            id="contact-submit"
+            disabled={status === "sending" || status === "success"}
+          >
+            {status === "sending" ? (
+              <span>Transmitting...</span>
+            ) : status === "success" ? (
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-white" />
+                Message Transmitted!
+              </span>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="meta-label block mb-2 text-[#151514]">
-                    Sender Identification / Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="e.g. Amish Kumar Dubey"
-                    className="specimen-input"
-                  />
-                </div>
-
-                <div>
-                  <label className="meta-label block mb-2 text-[#151514]">
-                    Electronic Mail Address
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="e.g. user@domain.com"
-                    className="specimen-input"
-                  />
-                </div>
-
-                <div>
-                  <label className="meta-label block mb-2 text-[#151514]">
-                    Statement of Inquiry / Project Requirements
-                  </label>
-                  <textarea
-                    name="message"
-                    required
-                    rows={5}
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Provide details regarding the project scope, timeline, or engineering role..."
-                    className="specimen-input resize-y min-h-[120px]"
-                  />
-                </div>
-
-                {status === "error" && (
-                  <div className="p-3 bg-[#F1F1EE] border border-[#151514] font-mono text-xs text-[#151514]">
-                    {errorMsg}
-                  </div>
-                )}
-
-                <div>
-                  <button
-                    type="submit"
-                    disabled={status === "loading"}
-                    className="btn-primary w-full py-3.5 text-xs uppercase tracking-wider font-mono cursor-pointer disabled:opacity-50"
-                  >
-                    <span>{status === "loading" ? "Transmitting..." : "Transmit Inquiry"}</span>
-                    <span className="arrow-nudge">→</span>
-                  </button>
-                </div>
-              </form>
+              <span className="flex items-center gap-2">
+                Send Message
+                <Send className="w-4 h-4" />
+              </span>
             )}
+          </button>
+
+          {/* Security badge at bottom of form */}
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#8f8f9c] pt-2 border-t border-white/5">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              Bot &amp; spam protected
+            </span>
+            <span>Rate limited</span>
           </div>
-        </div>
+        </form>
       </div>
     </section>
   );
