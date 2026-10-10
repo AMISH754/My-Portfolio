@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "amish-portfolio-blueprint"
-  }
+    "default": "amish-portfolio-blueprint",
+    "amish": "amish-kr-dubey"
+  },
+  "targets": {},
+  "etags": {}
 }
